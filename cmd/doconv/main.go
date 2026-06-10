@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/postship/doconv/pkg/doconv"
+	"github.com/SolaTyolo/doconv/pkg/doconv"
 )
 
 func main() {

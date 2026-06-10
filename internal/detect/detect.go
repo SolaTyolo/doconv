@@ -1,15 +1,15 @@
-// Package detect identifies Office Open XML formats from paths or magic bytes.
 package detect
 
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/json"
 	"errors"
 	"io"
 	"path/filepath"
 	"strings"
 
-	"github.com/postship/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/model"
 )
 
 var (
@@ -27,21 +27,41 @@ func FromPath(path string) (model.Format, error) {
 		return model.FormatXlsx, nil
 	case ".pptx":
 		return model.FormatPptx, nil
+	case ".pdf":
+		return model.FormatPDF, nil
+	case ".json":
+		return model.FormatJSON, nil
+	case ".csv", ".tsv":
+		return model.FormatCSV, nil
 	default:
 		return "", ErrUnknownFormat
 	}
 }
 
+// SupportedPath reports whether path is a known supported file.
+func SupportedPath(path string) bool {
+	_, err := FromPath(path)
+	return err == nil
+}
+
 // ZIP local file header signature PK\x03\x04
 var zipLocalHeader = []byte{0x50, 0x4b, 0x03, 0x04}
 
-// FromBytes inspects the ZIP signature and required OOXML parts.
-// At least 4 bytes are read; full detection may need more for OOXML checks.
+// FromBytes inspects magic bytes and structure.
 func FromBytes(data []byte) (model.Format, error) {
-	if len(data) < 4 || !bytes.HasPrefix(data, zipLocalHeader) {
-		return "", ErrUnknownFormat
+	if len(data) >= 4 && string(data[:4]) == "%PDF" {
+		return model.FormatPDF, nil
 	}
-	// Peek into ZIP: use minimal reader
+	if len(data) > 0 && json.Valid(data) {
+		return model.FormatJSON, nil
+	}
+	if len(data) >= 4 && bytes.HasPrefix(data, zipLocalHeader) {
+		return fromOOXMLZip(data)
+	}
+	return "", ErrUnknownFormat
+}
+
+func fromOOXMLZip(data []byte) (model.Format, error) {
 	r := bytes.NewReader(data)
 	zr, err := zip.NewReader(r, int64(len(data)))
 	if err != nil {

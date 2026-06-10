@@ -6,8 +6,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/postship/doconv/internal/model"
-	"github.com/postship/doconv/internal/stats"
+	"github.com/SolaTyolo/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/stats"
 	"github.com/xuri/excelize/v2"
 )
 

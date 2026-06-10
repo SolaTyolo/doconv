@@ -3,7 +3,7 @@ package ooxml
 import (
 	"testing"
 
-	"github.com/postship/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/model"
 )
 
 func TestApplyCoreXML(t *testing.T) {

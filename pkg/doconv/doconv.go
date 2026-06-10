@@ -5,9 +5,9 @@ package doconv
 import (
 	"io"
 
-	"github.com/postship/doconv/internal/model"
-	"github.com/postship/doconv/internal/parse"
-	"github.com/postship/doconv/internal/render"
+	"github.com/SolaTyolo/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/parse"
+	"github.com/SolaTyolo/doconv/internal/render"
 )
 
 // Re-export model types for public API stability.
@@ -27,10 +27,23 @@ type (
 
 // Format constants.
 const (
-	FormatDocx = model.FormatDocx
-	FormatXlsx = model.FormatXlsx
-	FormatPptx = model.FormatPptx
+	FormatDocx   = model.FormatDocx
+	FormatXlsx   = model.FormatXlsx
+	FormatPptx   = model.FormatPptx
+	FormatPDF    = model.FormatPDF
+	FormatJSON = model.FormatJSON
+	FormatCSV  = model.FormatCSV
 )
+
+// SupportedFilename reports whether the path/name is a supported input.
+func SupportedFilename(name string) bool {
+	return parse.SupportedFilename(name)
+}
+
+// SupportedFormats returns a comma-separated list of supported inputs.
+func SupportedFormats() string {
+	return parse.SupportedExts()
+}
 
 // ParseFile opens a path and returns a unified document tree.
 func ParseFile(path string) (*Document, error) {

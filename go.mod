@@ -1,6 +1,6 @@
-module github.com/postship/doconv
+module github.com/SolaTyolo/doconv
 
-go 1.22
+go 1.24.1
 
 require github.com/xuri/excelize/v2 v2.8.1
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 
-	"github.com/postship/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/model"
 )
 
 // JSONFormat selects indentation for JSON output.

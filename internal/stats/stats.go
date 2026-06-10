@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/postship/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/model"
 )
 
 // Apply sets document.Statistics from its content.

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/postship/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/model"
 )
 
 // coreProps maps docProps/core.xml with explicit namespaces used by Office.

@@ -3,7 +3,7 @@ package render
 import (
 	"strings"
 
-	"github.com/postship/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/model"
 )
 
 // MarkdownOptions configures Markdown output.

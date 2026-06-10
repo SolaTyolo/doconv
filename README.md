@@ -1,11 +1,17 @@
 # doconv
 
-Go library and HTTP/CLI service for extracting content from Microsoft Office Open XML files (**DOCX**, **XLSX**, **PPTX**) and rendering **Markdown**, **plain text**, or **JSON**. The design goals align with the [undoc](https://github.com/iyulab/undoc) Rust project: a small, fast pipeline from OOXML to text-friendly formats.
+Go library and HTTP/CLI service for extracting content from **Office** (DOCX, XLSX, PPTX), **PDF**, **JSON**, and **CSV**, rendering **Markdown**, **plain text**, or **JSON**. Inspired by the [undoc](https://github.com/iyulab/undoc) Rust project.
+
+Module: [`github.com/SolaTyolo/doconv`](https://github.com/SolaTyolo/doconv)
+
+> **Deprecation notice:** This project is **deprecated** and no longer maintained. For converting Office documents, PDFs, and other files to Markdown, use **[MarkItDown](https://github.com/microsoft/markitdown)** instead.
 
 ## Features
 
-- **Formats**: Word (`.docx`), Excel (`.xlsx`), PowerPoint (`.pptx`)
-- **Outputs**: Markdown (with optional YAML frontmatter), plain text, structured JSON
+- **Office**: `.docx`, `.xlsx`, `.pptx`
+- **PDF**: text extraction (plain text pages)
+- **Data**: `.json` (pretty-print), `.csv` / `.tsv` (markdown tables)
+- **Outputs**: Markdown, plain text, structured JSON
 - **Model**: Unified sections/paragraphs/tables suitable for downstream tools and LLM pipelines
 - **CLI**: `doconv` for local conversion
 - **HTTP**: `server` with `POST /convert` (multipart upload)
@@ -19,7 +25,7 @@ Go library and HTTP/CLI service for extracting content from Microsoft Office Ope
 | Path | Role |
 |------|------|
 | `pkg/doconv` | Public API: `ParseFile`, `ParseReader`, `ToMarkdown`, `ToPlainText`, `ToJSON`, format detection |
-| `internal/docx`, `internal/xlsx`, `internal/pptx` | Format parsers → unified model |
+| `internal/docx`, `internal/xlsx`, `internal/pptx`, `internal/pdf`, `internal/plain` | Format parsers |
 | `internal/render` | Markdown / text / JSON renderers |
 | `internal/parse` | Dispatch by extension or ZIP sniffing |
 | `internal/ooxml` | Shared OOXML helpers (e.g. `docProps/core.xml`) |
@@ -33,7 +39,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/postship/doconv/pkg/doconv"
+	"github.com/SolaTyolo/doconv/pkg/doconv"
 )
 
 func main() {
@@ -100,6 +106,7 @@ See your organization’s policy; the scaffold is suitable for MIT or BSD-style 
 
 ## See also
 
+- [MarkItDown](https://github.com/microsoft/markitdown) — **recommended replacement**; Python tool for converting files and Office documents to Markdown.
 - [undoc](https://github.com/iyulab/undoc) — Rust implementation with additional features (FFI, benchmarks, richer cleanup presets).
 
 Chinese documentation: [README.zh-CN.md](./README.zh-CN.md).

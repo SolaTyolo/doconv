@@ -3,7 +3,7 @@ package stats
 import (
 	"testing"
 
-	"github.com/postship/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/model"
 )
 
 func TestApply(t *testing.T) {

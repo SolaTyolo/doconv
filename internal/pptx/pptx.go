@@ -13,9 +13,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/postship/doconv/internal/model"
-	"github.com/postship/doconv/internal/ooxml"
-	"github.com/postship/doconv/internal/stats"
+	"github.com/SolaTyolo/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/ooxml"
+	"github.com/SolaTyolo/doconv/internal/stats"
 )
 
 // ParseFile reads a .pptx file from disk.

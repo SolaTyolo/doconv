@@ -1,6 +1,6 @@
 package doconv
 
-import "github.com/postship/doconv/internal/detect"
+import "github.com/SolaTyolo/doconv/internal/detect"
 
 // DetectFromPath returns the format from file extension.
 func DetectFromPath(path string) (Format, error) {

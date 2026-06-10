@@ -1,11 +1,17 @@
 # doconv
 
-面向 **DOCX / XLSX / PPTX** 的 Go 库与 HTTP/CLI 服务，将 Microsoft Office Open XML 文档抽取为 **Markdown**、**纯文本** 或 **JSON**。设计目标与 Rust 项目 [undoc](https://github.com/iyulab/undoc) 一致：从 OOXML 到文本类格式的高性能、可组合流水线。
+面向 **Office / PDF / JSON / CSV** 的 Go 库与 HTTP/CLI 服务，将文档抽取为 **Markdown**、**纯文本** 或 **JSON**。
+
+模块：[`github.com/SolaTyolo/doconv`](https://github.com/SolaTyolo/doconv)
+
+> **废弃说明：** 本项目已**废弃**，不再维护。如需将 Office、PDF 等文件转为 Markdown，请改用 **[MarkItDown](https://github.com/microsoft/markitdown)**。
 
 ## 功能概览
 
-- **格式**：Word（`.docx`）、Excel（`.xlsx`）、PowerPoint（`.pptx`）
-- **输出**：Markdown（可选 YAML frontmatter）、纯文本、结构化 JSON
+- **Office**：`.docx`、`.xlsx`、`.pptx`
+- **PDF**：文本提取
+- **数据**：`.json`、`.csv` / `.tsv`
+- **输出**：Markdown、纯文本、结构化 JSON
 - **模型**：统一的 section / 段落 / 表格，便于后续检索或 LLM 使用
 - **CLI**：本地转换工具 `doconv`
 - **HTTP**：`server` 提供 `POST /convert`（multipart 上传）
@@ -64,6 +70,7 @@ go test ./...
 
 ## 相关链接
 
+- [MarkItDown](https://github.com/microsoft/markitdown) — **推荐替代方案**；将各类文件与 Office 文档转为 Markdown 的 Python 工具。
 - [undoc](https://github.com/iyulab/undoc) — 功能更丰富的 Rust 实现（含 FFI、基准测试等）。
 
 英文说明见 [README.md](./README.md)。

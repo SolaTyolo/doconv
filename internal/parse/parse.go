@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
-	"github.com/postship/doconv/internal/detect"
-	"github.com/postship/doconv/internal/docx"
-	"github.com/postship/doconv/internal/model"
-	"github.com/postship/doconv/internal/pptx"
-	"github.com/postship/doconv/internal/xlsx"
+	"github.com/SolaTyolo/doconv/internal/detect"
+	"github.com/SolaTyolo/doconv/internal/docx"
+	"github.com/SolaTyolo/doconv/internal/model"
+	"github.com/SolaTyolo/doconv/internal/pdf"
+	"github.com/SolaTyolo/doconv/internal/plain"
+	"github.com/SolaTyolo/doconv/internal/pptx"
+	"github.com/SolaTyolo/doconv/internal/xlsx"
 )
 
 // ParseFile detects format from extension and parses the file.
@@ -20,6 +23,13 @@ func ParseFile(path string) (*model.Document, error) {
 	if err != nil {
 		return nil, err
 	}
+	if isPlainFormat(ft) {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return nil, err
+		}
+		return parsePlainBytes(data, ft, path)
+	}
 	switch ft {
 	case model.FormatDocx:
 		return docx.ParseFile(path)
@@ -27,18 +37,30 @@ func ParseFile(path string) (*model.Document, error) {
 		return xlsx.ParseFile(path)
 	case model.FormatPptx:
 		return pptx.ParseFile(path)
+	case model.FormatPDF:
+		f, err := os.Open(path)
+		if err != nil {
+			return nil, err
+		}
+		defer f.Close()
+		return pdf.ParseReader(f)
 	default:
 		return nil, fmt.Errorf("parse: unsupported format %q", ft)
 	}
 }
 
-// ParseReader reads the entire stream into memory, detects OOXML type from ZIP layout,
-// and parses. filenameHint is used for extension-based detection first (e.g. "a.docx").
+// ParseReader reads the entire stream into memory, detects type, and parses.
 func ParseReader(r io.Reader, filenameHint string) (*model.Document, error) {
 	if ft, err := detect.FromPath(filenameHint); err == nil {
 		data, err := io.ReadAll(r)
 		if err != nil {
 			return nil, err
+		}
+		if isPlainFormat(ft) {
+			return parsePlainBytes(data, ft, filenameHint)
+		}
+		if ft == model.FormatPDF {
+			return pdf.ParseBytes(data)
 		}
 		return parseBytesWithFormat(data, ft)
 	}
@@ -50,7 +72,33 @@ func ParseReader(r io.Reader, filenameHint string) (*model.Document, error) {
 	if err != nil {
 		return nil, err
 	}
+	if ft == model.FormatPDF {
+		return pdf.ParseBytes(data)
+	}
+	if isPlainFormat(ft) {
+		return parsePlainBytes(data, ft, filenameHint)
+	}
 	return parseBytesWithFormat(data, ft)
+}
+
+func isPlainFormat(ft model.Format) bool {
+	switch ft {
+	case model.FormatJSON, model.FormatCSV:
+		return true
+	default:
+		return false
+	}
+}
+
+func parsePlainBytes(data []byte, ft model.Format, filename string) (*model.Document, error) {
+	switch ft {
+	case model.FormatJSON:
+		return plain.ParseJSON(data)
+	case model.FormatCSV:
+		return plain.ParseCSV(data, filename)
+	default:
+		return nil, fmt.Errorf("parse: unsupported plain format %q", ft)
+	}
 }
 
 func parseBytesWithFormat(data []byte, ft model.Format) (*model.Document, error) {
@@ -67,7 +115,7 @@ func parseBytesWithFormat(data []byte, ft model.Format) (*model.Document, error)
 	}
 }
 
-// ParseReaderAt parses from a random-access reader when size is known (zero-copy friendly for *os.File).
+// ParseReaderAt parses from a random-access reader when size is known.
 func ParseReaderAt(ra io.ReaderAt, size int64, ft model.Format) (*model.Document, error) {
 	switch ft {
 	case model.FormatDocx:
@@ -84,6 +132,9 @@ func ParseReaderAt(ra io.ReaderAt, size int64, ft model.Format) (*model.Document
 
 // ParseFileWithFormat parses when the format is already known.
 func ParseFileWithFormat(path string, ft model.Format) (*model.Document, error) {
+	if isPlainFormat(ft) || ft == model.FormatPDF {
+		return ParseFile(path)
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -94,4 +145,17 @@ func ParseFileWithFormat(path string, ft model.Format) (*model.Document, error) 
 		return nil, err
 	}
 	return ParseReaderAt(f, st.Size(), ft)
+}
+
+// SupportedFilename reports whether filename/path is supported.
+func SupportedFilename(name string) bool {
+	return detect.SupportedPath(name)
+}
+
+// SupportedExts returns a human-readable list of supported inputs.
+func SupportedExts() string {
+	return strings.Join([]string{
+		".docx", ".xlsx", ".pptx",
+		".pdf", ".json", ".csv", ".tsv",
+	}, ", ")
 }

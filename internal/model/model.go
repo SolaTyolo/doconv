@@ -7,9 +7,12 @@ import "time"
 type Format string
 
 const (
-	FormatDocx Format = "docx"
-	FormatXlsx Format = "xlsx"
-	FormatPptx Format = "pptx"
+	FormatDocx   Format = "docx"
+	FormatXlsx   Format = "xlsx"
+	FormatPptx   Format = "pptx"
+	FormatPDF    Format = "pdf"
+	FormatJSON Format = "json"
+	FormatCSV  Format = "csv"
 )
 
 // Document is the normalized representation shared by DOCX, XLSX, and PPTX parsers.
