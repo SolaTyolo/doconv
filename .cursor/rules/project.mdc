@@ -1,0 +1,17 @@
+---
+description: doconv 项目约定与文档解析架构
+alwaysApply: true
+---
+
+# doconv
+
+- Go 1.22+ 库 + CLI + HTTP 服务，**无 DB / gRPC / protobuf**
+- **Public API** 在 `pkg/doconv`；实现细节在 `internal/`，parser 与 render 分离
+- **统一模型**：`internal/model.Document`；各格式 parser → render（Markdown / text / JSON）
+- **格式**：docx、xlsx、pptx（OOXML + zip/xml）、pdf（文本提取）、json、csv/tsv（plain）
+- **XLSX** 用 excelize；**DOCX/PPTX** 用 stdlib zip + encoding/xml
+- **源码注释与标识符英文**；README 可中英双语
+- 新增格式：detect → parser 包 → parse 分发 → 测试 → 文档
+- 测试：`go test ./...`；改 public API 时更新 `pkg/doconv` re-export
+- mcphub 依赖本库（`internal/docparse`）；签名变更需同步下游
+- 小 diff，匹配现有包布局；未要求不 git commit
